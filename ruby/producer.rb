@@ -6,37 +6,46 @@
 require 'bunny'
 require 'json'
 
-PAYLOAD_SIZE = 50
+class Producer
 
-@id_generator = 0
+  attr_reader :connection, :queue, :channel
 
-def next_id
-  @id_generator += 1
-  @id_generator
+  attr_accessor :id_generator
+
+  PAYLOAD_SIZE = 50
+
+  def initialize
+    @id_generator = 0
+    @connection = Bunny.new(hostname: "localhost")
+    puts " [ruby-producer] connected to : #{connection.inspect}"
+    connection.start
+    @channel = connection.create_channel
+    @queue = channel.queue("prodcons")
+  end
+
+  def self.produce
+    new().do_produce
+  end
+
+  def do_produce
+    channel.default_exchange.publish(json_message, :routing_key => queue.name)
+    puts " [ruby-producer] payload sent to queue \"#{queue.name}\""
+    connection.close
+  end
+
+  def next_id
+    @id_generator += 1
+    id_generator
+  end
+
+  def generate_random_payload
+    (0...PAYLOAD_SIZE).map { ('a'..'z').to_a[rand(26)] }.join
+  end
+
+  def json_message
+    {
+      id: next_id,
+      payload: generate_random_payload
+    }.to_json
+  end
 end
-
-def generate_random_payload
-  (0...PAYLOAD_SIZE).map { ('a'..'z').to_a[rand(26)] }.join
-end
-
-def json_message
-  {
-    id: next_id,
-    payload: generate_random_payload
-  }.to_json
-end
-
-# Connect to the Rabbitmq server
-connection = Bunny.new(hostname: "localhost")
-connection.start
-puts " [ruby-producer] connected to : #{connection.inspect}"
-
-channel = connection.create_channel
-queue = channel.queue("prodcons")
-
-puts " [ruby-producer] queue \"#{queue.name}\" created"
-
-channel.default_exchange.publish(json_message, :routing_key => queue.name)
-puts " [ruby-producer] payload sent"
-
-connection.close
