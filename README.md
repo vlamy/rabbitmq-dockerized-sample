@@ -7,7 +7,11 @@ The idea is to publish AMQP based samples in multiple languages, leveraging dock
 ```
 docker run -d --hostname my-rabbit --name rabbitmq-test-broker -p 8888:15672 -p 5672:5672 rabbitmq:3.6.2-management
 ```
-## Docker commands
+or later :
+```
+docker start rabbitmq-test-broker
+```
+## Ruby
 ```
 docker build ./ruby -t bunny-amqp
 ```
@@ -24,7 +28,18 @@ docker run --rm --net="host" -e BUNNY_ROLE="consumer" --name ruby-consumer bunny
 
 If there are no message within the queue, you will have to hit CTRL+C to quit the consumer.
 
+## Javascript/Nodejs
+(not dockerized yet)
+```
+npm install
+```
+run consumer :
+```
+npm start
+```
+
 ## Sources
 * https://github.com/docker-library/rabbitmq/
 * https://www.rabbitmq.com/configure.html
 * https://github.com/docker-library/docs/tree/master/rabbitmq
+* https://hub.docker.com/_/node/

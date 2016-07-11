@@ -1,0 +1,19 @@
+{
+  "name": "rabbitmq_js_samples",
+  "start": "node launcher.js",
+  "description": "client samples for RabbitMq/Amqp",
+  "private": true,
+  "scripts": {
+    "start": "node receive.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.4.1",
+    "when": "",
+    "node-uuid": ""
+  },
+  "repository" :
+    { "type" : "git",
+      "url" : "https://github.com/vlamy/rabbitmq-dockerized-sample.git"
+    },
+  "license": "Apache-2.0"
+}
